@@ -3,168 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Universe</title>
+    <title>Najisa | Home</title>
     <style>
-        /* 1. 基础重置：去掉 Cargo 强加的边距和滚动条 */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000;
+        /* 1. 基础重置 */
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background-color: #000; 
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+            transition: background-color 0.8s ease;
         }
-
-        :root { --bg-color: #000; }
-        .light-mode { --bg-color: #fff; }
-
-        /* 2. 通用全屏容器 */
-        .bg-container, .top-container, #universe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-        }
-
-        /* 3. 背景层呼吸 */
-        .mesh-layer, .top-layer {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background-size: cover;
-            background-position: center center;
-            transition: opacity 1s ease;
-            transform-origin: center center;
-        }
-
+        
+        /* 2. 全屏容器层级 */
+        .bg-container, .top-container, #universe { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; }
+        .mesh-layer, .top-layer { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background-size: cover; background-position: center; transition: opacity 1s ease; }
         .mesh-layer { animation: meshBreathe 12s infinite ease-in-out; }
-        .top-layer { transform: scale(1.1); }
+        @keyframes meshBreathe { 0%, 100% { transform: scale(1.1); } 50% { transform: scale(1.25); } }
 
-        @keyframes meshBreathe { 
-            0%, 100% { transform: scale(1.1); } 
-            50% { transform: scale(1.25); } 
-        }
+        /* 背景图路径 */
+        .dark-bg { background-image: url('./images/bg-dark.png'); opacity: 1; }
+        .light-bg { background-image: url('./images/bg-light.png'); opacity: 0; }
+        .top-dark { background-image: url('./images/top-dark.png'); opacity: 1; z-index: 10; }
+        .top-light { background-image: url('./images/top-light.png'); opacity: 0; z-index: 10; }
+        
+        /* 亮色模式切换逻辑 */
+        .light-mode .dark-bg { opacity: 0; }
+        .light-mode .light-bg { opacity: 1; }
+        .light-mode .top-dark { opacity: 0; }
+        .light-mode .top-light { opacity: 1; }
 
-        /* 4. 背景切换逻辑 */
-        .dark-bg, .top-dark { opacity: 1; }
-        .light-bg, .top-light { opacity: 0; }
-        .light-mode .dark-bg, .light-mode .top-dark { opacity: 0; }
-        .light-mode .light-bg, .light-mode .top-light { opacity: 1; }
-
-        /* 5. 灯绳系统 */
+        /* 3. 灯绳系统 (缩小并靠左) */
         .eye-toggle {
-            position: fixed;
-            top: 0;
-            left: 30px;
-            width: 200px;
-            height: 65vh;
-            z-index: 4000;
-            cursor: pointer;
+            position: fixed; top: 0; left: 0; width: 200px; height: 65vh; z-index: 4000; cursor: pointer;
+            transform: scale(0.7); transform-origin: top center;
         }
+        .layer-part { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center top; transition: opacity 0.1s steps(1); }
+        
+        .eye-dark { background-image: url('./images/eye-dark.png'); }
+        .eye-light { background-image: url('./images/eye-light.png'); }
+        .line-dark { background-image: url('./images/line-dark.png'); }
+        .line-light { background-image: url('./images/line-light.png'); }
+        .han-dark { background-image: url('./images/han-dark.png'); }
+        .han-light { background-image: url('./images/han-light.png'); }
 
-        .layer-part {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center top;
-            transition: opacity 0.1s steps(1); 
-        }
+        .line-group, .han-group { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-origin: top center; }
+
+        /* 4. 物理交互逻辑 */
+        .eye-dark, .eye-light, .line-group, .han-group { transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .eye-toggle:hover .line-group { transform: scaleY(1.02); }
+        .eye-toggle:hover .han-group { transform: translateY(10px); }
+
+        .eye-toggle:active .eye-dark, .eye-toggle:active .eye-light { transform: scaleY(1.1) scaleX(0.92); transition: transform 0.1s ease-out; }
+        .eye-toggle:active .line-group { transform: scaleY(1.02) translateY(8px); transition: transform 0.1s ease-out; }
+        .eye-toggle:active .han-group { transform: translateY(17px); transition: transform 0.1s ease-out; }
 
         /* 灯绳显隐 */
         .eye-light, .line-light, .han-light { opacity: 0; }
-        .eye-dark, .line-dark, .han-dark { opacity: 1; }
         .light-mode .eye-dark, .light-mode .line-dark, .light-mode .han-dark { opacity: 0; }
         .light-mode .eye-light, .light-mode .line-light, .light-mode .han-light { opacity: 1; }
 
-.eye-toggle {
-    position: fixed;
-    top: 0;
-    left: 0px;
-    width: 200px;
-    height: 65vh;
-    z-index: 4000;
-    cursor: pointer;
-    
-    /* 🚀 核心修改：整体缩小到原来的 70% */
-    transform: scale(0.7); 
-    /* 确保缩放中心在顶部，这样灯绳还是挂在顶部的 */
-    transform-origin: top center; 
-    
-    /* 增加一个过渡，防止缩放时太生硬 */
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+        /* 5. 核心排版：大标题与中心导航 */
+        .hero-container {
+            position: fixed;
+            top: 45%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 9999; 
+            pointer-events: none;
+        }
 
-        /* --- 基础定位 (保留) --- */
-.line-group, .han-group { 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    transform-origin: top center; 
-    /* 这里的 transition 删掉，统一写在下面 */
-}
+        .main-title {
+            pointer-events: auto;
+            color: white;
+            font-size: 160px; 
+            letter-spacing: 50px; 
+            margin: 0;
+            padding-left: 50px; 
+            font-weight: 100;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.5s ease, color 0.8s ease;
+        }
+        .main-title:hover { opacity: 0.7; }
 
-/* --- 1. 悬停状态 (不变) --- */
-.eye-toggle:hover .line-group { transform: scaleY(1.02); }
-.eye-toggle:hover .han-group { transform: translateY(10px); }
+        .sub-nav {
+            pointer-events: auto;
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+        }
 
-/* --- 2. 按下瞬间 (Active) --- */
-.eye-toggle:active .eye-dark, 
-.eye-toggle:active .eye-light {
-    transform: scaleY(1.1) scaleX(0.92); 
-    transform-origin: top center;
-    transition: transform 0.1s ease-out; /* 按下瞬间的速度 */
-}
+        /* 🚀 统一导航项样式 (Work, About, Contact) */
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            opacity: 1; /* 透明度变为1 */
+            position: relative;
+            transition: color 0.8s ease, opacity 0.3s ease;
+        }
 
-.eye-toggle:active .line-group { 
-    transform: scaleY(1.02) translateY(8px); 
-    transition: transform 0.1s ease-out; /* 强制同步 */
-}
+        /* 🚀 统一的下划线效果 (针对 HOME 和 nav-item) */
+        .home-btn, .nav-item {
+            display: inline-block;
+        }
 
-.eye-toggle:active .han-group { 
-    transform: translateY(17px); 
-    transition: transform 0.1s ease-out; /* 强制同步 */
-}
+        .home-btn::after, .nav-item::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -5px; 
+            left: 0; 
+            width: 0; 
+            height: 1px; 
+            background: white; 
+            transition: width 0.3s ease; 
+        }
 
-/* --- 3. 基础过渡 (回弹效果的灵魂) --- */
-/* 这里统一控制松开鼠标后的弹力感觉 */
-.line-group, .han-group, .eye-dark, .eye-light {
-    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); 
-}
+        /* 🚀 修正下划线长度：由于 letter-spacing 会在最后一个字符后留白，
+           我们将宽度设为 calc(100% - 间距) 来精准对齐文字 */
+        .home-btn:hover::after { width: calc(100% - 5px); }
+        .nav-item:hover::after { width: calc(100% - 10px); }
 
+        /* 6. 右上角：HOME + 汉堡菜单 */
+        .top-right-util {
+            position: fixed;
+            top: 40px;
+            right: 50px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            z-index: 9999;
+        }
 
-        /* 7. 图片链接（保持不变） */
-/* 修改后的图片路径示例 */
-.dark-bg { background-image: url('./images/bg-dark.png'); }
-.light-bg { background-image: url('./images/bg-light.png'); }
-.top-dark { background-image: url('./images/top-dark.png'); }
-.top-light { background-image: url('./images/top-light.png'); }
-.eye-dark { background-image: url('./images/eye-dark.png'); }
-.eye-light { background-image: url('./images/eye-light.png'); }
-.line-dark { background-image: url('./images/line-dark.png'); }
-.line-light { background-image: url('./images/line-light.png'); }
-.han-dark { background-image: url('./images/han-dark.png'); }
-.han-light { background-image: url('./images/han-light.png'); }
+        .home-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 5px;
+            opacity: 1;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* 🚀 汉堡菜单高级交互 */
+        .burger-icon { 
+            width: 30px; 
+            height: 14px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            cursor: pointer; 
+        }
+
+        .burger-icon span { 
+            width: 100%; 
+            height: 2px; 
+            background: white; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 丝滑物理反馈 [cite: 2026-02-22] */
+        }
+
+        /* 状态 A：普通状态下的非对称伸缩 (使用你的参数) */
+        .burger-icon:not(.active):hover span:first-child { width: 80%; }
+        .burger-icon:not(.active):hover span:last-child { 
+            width: 80%; 
+            transform: translateX(8px); 
+        }
+
+        /* 状态 B：点击后的交叉态 (Active) [cite: 2026-02-25] */
+        .burger-icon.active span:first-child { transform: translateY(6px) rotate(45deg); width: 100%; }
+        .burger-icon.active span:last-child { transform: translateY(-6px) rotate(-45deg); width: 100%; }
+
+        /* 🚀 状态 C：交叉态下的二次 Hover (收缩并增加角度) */
+        .burger-icon.active:hover span:first-child { 
+            transform: translateY(6px) rotate(55deg) scale(0.85); 
+        }
+        .burger-icon.active:hover span:last-child { 
+            transform: translateY(-6px) rotate(-55deg) scale(0.85); 
+        }
+
+        /* 🌗 亮色模式适配 */
+        .light-mode .main-title, 
+        .light-mode .nav-item, 
+        .light-mode .home-btn { color: black; }
+        .light-mode .home-btn::after,
+        .light-mode .nav-item::after,
+        .light-mode .burger-icon span { background-color: black; }
     </style>
 </head>
 <body>
 
 <div class="eye-toggle" id="modeBtn">
-    <div class="layer-part eye-dark"></div>
-    <div class="layer-part eye-light"></div>
+    <div class="layer-part eye-dark"></div><div class="layer-part eye-light"></div>
     <div class="line-group">
-        <div class="layer-part line-dark"></div>
-        <div class="layer-part line-light"></div>
+        <div class="layer-part line-dark"></div><div class="layer-part line-light"></div>
     </div>
     <div class="han-group">
-        <div class="layer-part han-dark"></div>
-        <div class="layer-part han-light"></div>
+        <div class="layer-part han-dark"></div><div class="layer-part han-light"></div>
     </div>
 </div>
 
@@ -178,6 +215,22 @@
 <div class="top-container">
     <div class="top-layer top-dark"></div>
     <div class="top-layer top-light"></div>
+</div>
+
+<div class="top-right-util">
+    <a href="index.html" class="home-btn">HOME</a>
+    <div class="burger-icon" id="burger">
+        <span></span><span></span>
+    </div>
+</div>
+
+<div class="hero-container">
+    <h1 class="main-title" onclick="location.reload()">NAJISA</h1>
+    <nav class="sub-nav">
+        <a href="works.html" class="nav-item">Work</a>
+        <a href="about.html" class="nav-item">About</a>
+        <a href="contact.html" class="nav-item">Contact</a>
+    </nav>
 </div>
 
 <script>
@@ -243,16 +296,13 @@
         }
         draw(ox, oy) {
             const finalSc = this.sc * (1 + Math.sin(this.bPh) * this.bAmp) * (1 + Math.sin(this.tPh) * 0.1);
-            const m = motherCache.dark[this.idx];
-            const w = m.width * finalSc, h = m.height * finalSc;
             const weight = (2.5 - this.idx); 
-            const dx = this.x - w/2 + (ox * weight);
-            const dy = this.y - h/2 + (oy * weight);
-
+            const dx = this.x - (motherCache.dark[this.idx].width * finalSc)/2 + (ox * weight);
+            const dy = this.y - (motherCache.dark[this.idx].height * finalSc)/2 + (oy * weight);
             ctx.globalAlpha = Math.max(0, this.op * (1 - colorTransition));
-            ctx.drawImage(motherCache.dark[this.idx], dx, dy, w, h);
+            ctx.drawImage(motherCache.dark[this.idx], dx, dy, motherCache.dark[this.idx].width * finalSc, motherCache.dark[this.idx].height * finalSc);
             ctx.globalAlpha = Math.max(0, this.op * colorTransition);
-            ctx.drawImage(motherCache.light[this.idx], dx, dy, w, h);
+            ctx.drawImage(motherCache.light[this.idx], dx, dy, motherCache.light[this.idx].width * finalSc, motherCache.light[this.idx].height * finalSc);
         }
     }
 
@@ -270,11 +320,9 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         v.tx *= config.friction; v.ty *= config.friction;
         v.x += (v.tx - v.x) * config.ease; v.y += (v.ty - v.y) * config.ease;
-
         const step = 16.6 / 1000;
         if (isLightMode && colorTransition < 1) colorTransition = Math.min(1, colorTransition + step);
         if (!isLightMode && colorTransition > 0) colorTransition = Math.max(0, colorTransition - step);
-        
         stars.forEach(s => { s.update(); s.draw(v.x, v.y); });
         requestAnimationFrame(loop);
     }
@@ -290,6 +338,10 @@
     modeBtn.onclick = () => {
         document.body.classList.toggle('light-mode');
         isLightMode = !isLightMode;
+    };
+
+    document.getElementById('burger').onclick = function() {
+        this.classList.toggle('active');
     };
 
     window.addEventListener('resize', init);
