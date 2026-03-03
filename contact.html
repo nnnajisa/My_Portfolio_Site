@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Najisa | Home</title>
+    <style>
+        /* 1. 基础重置 */
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background-color: #000; 
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+            transition: background-color 0.8s ease;
+        }
+        
+        /* 2. 全屏容器层级 */
+        .bg-container, .top-container, #universe { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; }
+        .mesh-layer, .top-layer { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background-size: cover; background-position: center; transition: opacity 1s ease; }
+        .mesh-layer { animation: meshBreathe 12s infinite ease-in-out; }
+        @keyframes meshBreathe { 0%, 100% { transform: scale(1.1); } 50% { transform: scale(1.25); } }
+
+        /* 背景图路径 [cite: 2026-02-22] */
+        .dark-bg { background-image: url('./images/bg-dark.png'); opacity: 1; }
+        .light-bg { background-image: url('./images/bg-light.png'); opacity: 0; }
+        .top-dark { background-image: url('./images/top-dark.png'); opacity: 1; z-index: 10; }
+        .top-light { background-image: url('./images/top-light.png'); opacity: 0; z-index: 10; }
+        
+        /* 亮色模式切换逻辑 */
+        .light-mode .dark-bg, .light-mode .top-dark { opacity: 0; }
+        .light-mode .light-bg, .light-mode .top-light { opacity: 1; }
+
+        /* 3. 灯绳系统 (注入果冻拉伸逻辑) [cite: 2026-02-22] */
+        .eye-toggle {
+            position: fixed; top: 0; left: 0; width: 200px; height: 65vh; z-index: 4000; cursor: pointer;
+            transform: scale(0.7); transform-origin: top center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .layer-part { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center top; transition: opacity 0.1s steps(1); }
+        
+        .eye-dark { background-image: url('./images/eye-dark.png'); }
+        .eye-light { background-image: url('./images/eye-light.png'); }
+        .line-dark { background-image: url('./images/line-dark.png'); }
+        .line-light { background-image: url('./images/line-light.png'); }
+        .han-dark { background-image: url('./images/han-dark.png'); }
+        .han-light { background-image: url('./images/han-light.png'); }
+
+        .line-group, .han-group { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-origin: top center; }
+
+        /* 🚀 核心：果冻形变与回弹逻辑 [cite: 2026-02-22] */
+        .eye-dark, .eye-light, .line-group, .han-group { transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .eye-toggle:hover .line-group { transform: scaleY(1.02); }
+        .eye-toggle:hover .han-group { transform: translateY(10px); }
+
+        .eye-toggle:active .eye-dark, .eye-toggle:active .eye-light { 
+            transform: scaleY(1.1) scaleX(0.92); 
+            transform-origin: top center;
+            transition: transform 0.1s ease-out; 
+        }
+        .eye-toggle:active .line-group { transform: scaleY(1.02) translateY(8px); transition: transform 0.1s ease-out; }
+        .eye-toggle:active .han-group { transform: translateY(17px); transition: transform 0.1s ease-out; }
+
+        /* 灯绳昼夜显隐 [cite: 2026-02-22] */
+        .eye-light, .line-light, .han-light { opacity: 0; }
+        .light-mode .eye-dark, .light-mode .line-dark, .light-mode .han-dark { opacity: 0; }
+        .light-mode .eye-light, .light-mode .line-light, .light-mode .han-light { opacity: 1; }
+
+        /* 4. 核心排版 [cite: 2026-02-25] */
+        .hero-container {
+            position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; z-index: 9999; pointer-events: none;
+        }
+        .main-title {
+            pointer-events: auto; color: white; font-size: 160px; letter-spacing: 50px; 
+            margin: 0; padding-left: 50px; font-weight: 100; cursor: pointer; text-decoration: none;
+            transition: opacity 0.5s ease, color 0.8s ease;
+        }
+        .main-title:hover { opacity: 0.7; }
+
+        .sub-nav {
+            pointer-events: auto; margin-top: 60px; display: flex; justify-content: center; gap: 100px;
+        }
+
+        /* 🚀 统一导航项 [cite: 2026-02-25] */
+        .nav-item, .home-btn {
+            color: white; text-decoration: none; text-transform: uppercase; 
+            position: relative; transition: color 0.8s ease; opacity: 1;
+        }
+        .nav-item { font-size: 18px; letter-spacing: 10px; }
+        .home-btn { font-size: 14px; letter-spacing: 5px; }
+
+        /* 精准下划线对齐 [cite: 2026-02-25] */
+        .home-btn::after, .nav-item::after { 
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 1px; 
+            background: white; transition: width 0.3s ease; 
+        }
+        .home-btn:hover::after { width: calc(100% - 5px); }
+        .nav-item:hover::after { width: calc(100% - 10px); }
+
+        /* 5. 右上角：HOME + 汉堡菜单 [cite: 2026-02-25] */
+        .top-right-util { position: fixed; top: 40px; right: 50px; display: flex; align-items: center; gap: 40px; z-index: 9999; }
+        .burger-icon { width: 30px; height: 14px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
+        .burger-icon span { width: 100%; height: 2px; background: white; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .burger-icon:not(.active):hover span:first-child { width: 80%; }
+        .burger-icon:not(.active):hover span:last-child { width: 80%; transform: translateX(8px); }
+
+        .burger-icon.active span:first-child { transform: translateY(6px) rotate(45deg); width: 100%; }
+        .burger-icon.active span:last-child { transform: translateY(-6px) rotate(-45deg); width: 100%; }
+        
+        /* 交叉态 Hover */
+        .burger-icon.active:hover span:first-child { transform: translateY(6px) rotate(55deg) scale(0.85); }
+        .burger-icon.active:hover span:last-child { transform: translateY(-6px) rotate(-55deg) scale(0.85); }
+
+        /* 🌗 亮色模式适配 [cite: 2026-02-25] */
+        .light-mode .main-title, .light-mode .nav-item, .light-mode .home-btn { color: black; }
+        .light-mode .home-btn::after, .light-mode .nav-item::after, .light-mode .burger-icon span { background-color: black; }
+    </style>
+</head>
+<body>
+
+<div class="eye-toggle" id="modeBtn">
+    <div class="layer-part eye-dark"></div><div class="layer-part eye-light"></div>
+    <div class="line-group"><div class="layer-part line-dark"></div><div class="layer-part line-light"></div></div>
+    <div class="han-group"><div class="layer-part han-dark"></div><div class="layer-part han-light"></div></div>
+</div>
+
+<div class="bg-container">
+    <div class="mesh-layer dark-bg"></div><div class="mesh-layer light-bg"></div>
+</div>
+
+<canvas id="universe"></canvas>
+
+<div class="top-container">
+    <div class="top-layer top-dark"></div><div class="top-layer top-light"></div>
+</div>
+
+<div class="top-right-util">
+    <a href="index.html" class="home-btn">HOME</a>
+    <div class="burger-icon" id="burger"><span></span><span></span></div>
+</div>
+
+<div class="hero-container">
+    <h1 class="main-title" onclick="location.reload()">NAJISA</h1>
+    <nav class="sub-nav">
+        <a href="works.html" class="nav-item">Work</a>
+        <a href="about.html" class="nav-item">About</a>
+        <a href="contact.html" class="nav-item">Contact</a>
+    </nav>
+</div>
+
+<script>
+    const canvas = document.getElementById('universe');
+    const ctx = canvas.getContext('2d');
+    const modeBtn = document.getElementById('modeBtn');
+    let isLightMode = false, colorTransition = 0; 
+
+    const config = { 
+        starCount: 45, particleCount: 45000, baseSize: 40, longAxisRatio: 2.2, sharpness: 0.45, friction: 0.94, ease: 0.06 
+    };
+
+    let v = { x: 0, y: 0, tx: 0, ty: 0 };
+    let lastM = { x: 0, y: 0 };
+    const motherCache = { dark: [], light: [] };
+
+    function createMother(color, blurStr) {
+        const mCanvas = document.createElement('canvas');
+        const w = config.baseSize * 5, h = w * config.longAxisRatio;
+        mCanvas.width = w; mCanvas.height = h;
+        const mctx = mCanvas.getContext('2d');
+        if (blurStr !== '0px') mctx.filter = `blur(${blurStr})`;
+        mctx.fillStyle = color;
+        const cx = w/2, cy = h/2;
+        for (let i = 0; i < config.particleCount; i++) {
+            const rx = (Math.random() - 0.5) * config.baseSize * 4;
+            const ry = (Math.random() - 0.5) * config.baseSize * config.longAxisRatio * 2;
+            const nx = Math.abs(rx) / config.baseSize, ny = Math.abs(ry) / (config.baseSize * config.longAxisRatio);
+            const dist = Math.pow(nx, config.sharpness) + Math.pow(ny, config.sharpness);
+            if (dist < 0.8 || (dist < 1.6 && Math.random() < Math.pow(1 - (dist - 0.8) / 0.8, 8))) {
+                let pSize = 0.3 + 1.9 * Math.pow(Math.max(0, 1 - dist/1.6), 2);
+                mctx.fillRect(cx + rx, cy + ry, pSize, pSize);
+            }
+        }
+        return mCanvas;
+    }
+
+    class Star {
+        constructor() { this.reset(); this.age = Math.random() * 8000; }
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            const r = Math.random();
+            if (r > 0.8) { this.idx = 0; this.sc = 0.45; this.bAmp = 0.35; this.bSpd = 0.005; } 
+            else if (r > 0.4) { this.idx = 1; this.sc = 0.28; this.bAmp = 0.15; this.bSpd = 0.012; } 
+            else { this.idx = 2; this.sc = 0.15; this.bAmp = 0.05; this.bSpd = 0.02; }
+            this.op = 0; this.life = 10000 + Math.random() * 10000; this.age = 0;
+            this.bPh = Math.random() * 7; this.tPh = Math.random() * 7;
+        }
+        update() {
+            this.age += 16.6; this.bPh += this.bSpd; this.tPh += 0.05;
+            const fade = 2500;
+            if (this.age < fade) this.op = this.age / fade;
+            else if (this.age > this.life - fade) this.op = (this.life - this.age) / fade;
+            else this.op = 1;
+            if (this.age >= this.life) this.reset();
+        }
+        draw(ox, oy) {
+            const finalSc = this.sc * (1 + Math.sin(this.bPh) * this.bAmp) * (1 + Math.sin(this.tPh) * 0.1);
+            const weight = (2.5 - this.idx); 
+            const dx = this.x - (motherCache.dark[this.idx].width * finalSc)/2 + (ox * weight);
+            const dy = this.y - (motherCache.dark[this.idx].height * finalSc)/2 + (oy * weight);
+            ctx.globalAlpha = Math.max(0, this.op * (1 - colorTransition));
+            ctx.drawImage(motherCache.dark[this.idx], dx, dy, motherCache.dark[this.idx].width * finalSc, motherCache.dark[this.idx].height * finalSc);
+            ctx.globalAlpha = Math.max(0, this.op * colorTransition);
+            ctx.drawImage(motherCache.light[this.idx], dx, dy, motherCache.light[this.idx].width * finalSc, motherCache.light[this.idx].height * finalSc);
+        }
+    }
+
+    let stars = [];
+    function init() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const blurs = ['0px', '0.6px', '1.8px'];
+        motherCache.dark = blurs.map(b => createMother("white", b));
+        motherCache.light = blurs.map(b => createMother("black", b));
+        stars = Array.from({ length: config.starCount }, () => new Star());
+    }
+
+    function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        v.tx *= config.friction; v.ty *= config.friction;
+        v.x += (v.tx - v.x) * config.ease; v.y += (v.ty - v.y) * config.ease;
+        const step = 16.6 / 1000;
+        if (isLightMode && colorTransition < 1) colorTransition = Math.min(1, colorTransition + step);
+        if (!isLightMode && colorTransition > 0) colorTransition = Math.max(0, colorTransition - step);
+        stars.forEach(s => { s.update(); s.draw(v.x, v.y); });
+        requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+        if (lastM.x !== 0) { v.tx += (e.clientX - lastM.x) * 0.5; v.ty += (e.clientY - lastM.y) * 0.5; }
+        lastM.x = e.clientX; lastM.y = e.clientY;
+    });
+
+    modeBtn.onclick = () => { document.body.classList.toggle('light-mode'); isLightMode = !isLightMode; };
+    document.getElementById('burger').onclick = function() { this.classList.toggle('active'); };
+
+    window.addEventListener('resize', init);
+    init(); loop();
+</script>
+</body>
+</html>
