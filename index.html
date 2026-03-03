@@ -19,22 +19,21 @@
         .mesh-layer { animation: meshBreathe 12s infinite ease-in-out; }
         @keyframes meshBreathe { 0%, 100% { transform: scale(1.1); } 50% { transform: scale(1.25); } }
 
-        /* 背景图路径 */
+        /* 背景图路径 [cite: 2026-02-22] */
         .dark-bg { background-image: url('./images/bg-dark.png'); opacity: 1; }
         .light-bg { background-image: url('./images/bg-light.png'); opacity: 0; }
         .top-dark { background-image: url('./images/top-dark.png'); opacity: 1; z-index: 10; }
         .top-light { background-image: url('./images/top-light.png'); opacity: 0; z-index: 10; }
         
         /* 亮色模式切换逻辑 */
-        .light-mode .dark-bg { opacity: 0; }
-        .light-mode .light-bg { opacity: 1; }
-        .light-mode .top-dark { opacity: 0; }
-        .light-mode .top-light { opacity: 1; }
+        .light-mode .dark-bg, .light-mode .top-dark { opacity: 0; }
+        .light-mode .light-bg, .light-mode .top-light { opacity: 1; }
 
-        /* 3. 灯绳系统 (缩小并靠左) */
+        /* 3. 灯绳系统 (注入果冻拉伸逻辑) [cite: 2026-02-22] */
         .eye-toggle {
             position: fixed; top: 0; left: 0; width: 200px; height: 65vh; z-index: 4000; cursor: pointer;
             transform: scale(0.7); transform-origin: top center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .layer-part { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center top; transition: opacity 0.1s steps(1); }
         
@@ -47,181 +46,97 @@
 
         .line-group, .han-group { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-origin: top center; }
 
-        /* 4. 物理交互逻辑 */
+        /* 🚀 核心：果冻形变与回弹逻辑 [cite: 2026-02-22] */
         .eye-dark, .eye-light, .line-group, .han-group { transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .eye-toggle:hover .line-group { transform: scaleY(1.02); }
         .eye-toggle:hover .han-group { transform: translateY(10px); }
 
-        .eye-toggle:active .eye-dark, .eye-toggle:active .eye-light { transform: scaleY(1.1) scaleX(0.92); transition: transform 0.1s ease-out; }
+        .eye-toggle:active .eye-dark, .eye-toggle:active .eye-light { 
+            transform: scaleY(1.1) scaleX(0.92); 
+            transform-origin: top center;
+            transition: transform 0.1s ease-out; 
+        }
         .eye-toggle:active .line-group { transform: scaleY(1.02) translateY(8px); transition: transform 0.1s ease-out; }
         .eye-toggle:active .han-group { transform: translateY(17px); transition: transform 0.1s ease-out; }
 
-        /* 灯绳显隐 */
+        /* 灯绳昼夜显隐 [cite: 2026-02-22] */
         .eye-light, .line-light, .han-light { opacity: 0; }
         .light-mode .eye-dark, .light-mode .line-dark, .light-mode .han-dark { opacity: 0; }
         .light-mode .eye-light, .light-mode .line-light, .light-mode .han-light { opacity: 1; }
 
-        /* 5. 核心排版：大标题与中心导航 */
+        /* 4. 核心排版 [cite: 2026-02-25] */
         .hero-container {
-            position: fixed;
-            top: 45%; 
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 9999; 
-            pointer-events: none;
+            position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; z-index: 9999; pointer-events: none;
         }
-
         .main-title {
-            pointer-events: auto;
-            color: white;
-            font-size: 160px; 
-            letter-spacing: 50px; 
-            margin: 0;
-            padding-left: 50px; 
-            font-weight: 100;
-            cursor: pointer;
-            text-decoration: none;
+            pointer-events: auto; color: white; font-size: 160px; letter-spacing: 50px; 
+            margin: 0; padding-left: 50px; font-weight: 100; cursor: pointer; text-decoration: none;
             transition: opacity 0.5s ease, color 0.8s ease;
         }
         .main-title:hover { opacity: 0.7; }
 
         .sub-nav {
-            pointer-events: auto;
-            margin-top: 60px;
-            display: flex;
-            justify-content: center;
-            gap: 100px;
+            pointer-events: auto; margin-top: 60px; display: flex; justify-content: center; gap: 100px;
         }
 
-        /* 🚀 统一导航项样式 (Work, About, Contact) */
-        .nav-item {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            letter-spacing: 10px;
-            text-transform: uppercase;
-            opacity: 1; /* 透明度变为1 */
-            position: relative;
-            transition: color 0.8s ease, opacity 0.3s ease;
+        /* 🚀 统一导航项 [cite: 2026-02-25] */
+        .nav-item, .home-btn {
+            color: white; text-decoration: none; text-transform: uppercase; 
+            position: relative; transition: color 0.8s ease; opacity: 1;
         }
+        .nav-item { font-size: 18px; letter-spacing: 10px; }
+        .home-btn { font-size: 14px; letter-spacing: 5px; }
 
-        /* 🚀 统一的下划线效果 (针对 HOME 和 nav-item) */
-        .home-btn, .nav-item {
-            display: inline-block;
-        }
-
+        /* 精准下划线对齐 [cite: 2026-02-25] */
         .home-btn::after, .nav-item::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: -5px; 
-            left: 0; 
-            width: 0; 
-            height: 1px; 
-            background: white; 
-            transition: width 0.3s ease; 
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 1px; 
+            background: white; transition: width 0.3s ease; 
         }
-
-        /* 🚀 修正下划线长度：由于 letter-spacing 会在最后一个字符后留白，
-           我们将宽度设为 calc(100% - 间距) 来精准对齐文字 */
         .home-btn:hover::after { width: calc(100% - 5px); }
         .nav-item:hover::after { width: calc(100% - 10px); }
 
-        /* 6. 右上角：HOME + 汉堡菜单 */
-        .top-right-util {
-            position: fixed;
-            top: 40px;
-            right: 50px;
-            display: flex;
-            align-items: center;
-            gap: 40px;
-            z-index: 9999;
-        }
+        /* 5. 右上角：HOME + 汉堡菜单 [cite: 2026-02-25] */
+        .top-right-util { position: fixed; top: 40px; right: 50px; display: flex; align-items: center; gap: 40px; z-index: 9999; }
+        .burger-icon { width: 30px; height: 14px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
+        .burger-icon span { width: 100%; height: 2px; background: white; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        .home-btn {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            letter-spacing: 5px;
-            opacity: 1;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        /* 🚀 汉堡菜单高级交互 */
-        .burger-icon { 
-            width: 30px; 
-            height: 14px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            cursor: pointer; 
-        }
-
-        .burger-icon span { 
-            width: 100%; 
-            height: 2px; 
-            background: white; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 丝滑物理反馈 [cite: 2026-02-22] */
-        }
-
-        /* 状态 A：普通状态下的非对称伸缩 (使用你的参数) */
         .burger-icon:not(.active):hover span:first-child { width: 80%; }
-        .burger-icon:not(.active):hover span:last-child { 
-            width: 80%; 
-            transform: translateX(8px); 
-        }
+        .burger-icon:not(.active):hover span:last-child { width: 80%; transform: translateX(8px); }
 
-        /* 状态 B：点击后的交叉态 (Active) [cite: 2026-02-25] */
         .burger-icon.active span:first-child { transform: translateY(6px) rotate(45deg); width: 100%; }
         .burger-icon.active span:last-child { transform: translateY(-6px) rotate(-45deg); width: 100%; }
+        
+        /* 交叉态 Hover */
+        .burger-icon.active:hover span:first-child { transform: translateY(6px) rotate(55deg) scale(0.85); }
+        .burger-icon.active:hover span:last-child { transform: translateY(-6px) rotate(-55deg) scale(0.85); }
 
-        /* 🚀 状态 C：交叉态下的二次 Hover (收缩并增加角度) */
-        .burger-icon.active:hover span:first-child { 
-            transform: translateY(6px) rotate(55deg) scale(0.85); 
-        }
-        .burger-icon.active:hover span:last-child { 
-            transform: translateY(-6px) rotate(-55deg) scale(0.85); 
-        }
-
-        /* 🌗 亮色模式适配 */
-        .light-mode .main-title, 
-        .light-mode .nav-item, 
-        .light-mode .home-btn { color: black; }
-        .light-mode .home-btn::after,
-        .light-mode .nav-item::after,
-        .light-mode .burger-icon span { background-color: black; }
+        /* 🌗 亮色模式适配 [cite: 2026-02-25] */
+        .light-mode .main-title, .light-mode .nav-item, .light-mode .home-btn { color: black; }
+        .light-mode .home-btn::after, .light-mode .nav-item::after, .light-mode .burger-icon span { background-color: black; }
     </style>
 </head>
 <body>
 
 <div class="eye-toggle" id="modeBtn">
     <div class="layer-part eye-dark"></div><div class="layer-part eye-light"></div>
-    <div class="line-group">
-        <div class="layer-part line-dark"></div><div class="layer-part line-light"></div>
-    </div>
-    <div class="han-group">
-        <div class="layer-part han-dark"></div><div class="layer-part han-light"></div>
-    </div>
+    <div class="line-group"><div class="layer-part line-dark"></div><div class="layer-part line-light"></div></div>
+    <div class="han-group"><div class="layer-part han-dark"></div><div class="layer-part han-light"></div></div>
 </div>
 
 <div class="bg-container">
-    <div class="mesh-layer dark-bg"></div>
-    <div class="mesh-layer light-bg"></div>
+    <div class="mesh-layer dark-bg"></div><div class="mesh-layer light-bg"></div>
 </div>
 
 <canvas id="universe"></canvas>
 
 <div class="top-container">
-    <div class="top-layer top-dark"></div>
-    <div class="top-layer top-light"></div>
+    <div class="top-layer top-dark"></div><div class="top-layer top-light"></div>
 </div>
 
 <div class="top-right-util">
     <a href="index.html" class="home-btn">HOME</a>
-    <div class="burger-icon" id="burger">
-        <span></span><span></span>
-    </div>
+    <div class="burger-icon" id="burger"><span></span><span></span></div>
 </div>
 
 <div class="hero-container">
@@ -240,13 +155,7 @@
     let isLightMode = false, colorTransition = 0; 
 
     const config = { 
-        starCount: 45, 
-        particleCount: 45000, 
-        baseSize: 40, 
-        longAxisRatio: 2.2, 
-        sharpness: 0.45,
-        friction: 0.94, 
-        ease: 0.06 
+        starCount: 45, particleCount: 45000, baseSize: 40, longAxisRatio: 2.2, sharpness: 0.45, friction: 0.94, ease: 0.06 
     };
 
     let v = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -308,8 +217,7 @@
 
     let stars = [];
     function init() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         const blurs = ['0px', '0.6px', '1.8px'];
         motherCache.dark = blurs.map(b => createMother("white", b));
         motherCache.light = blurs.map(b => createMother("black", b));
@@ -328,21 +236,12 @@
     }
 
     window.addEventListener('mousemove', (e) => {
-        if (lastM.x !== 0) {
-            v.tx += (e.clientX - lastM.x) * 0.5;
-            v.ty += (e.clientY - lastM.y) * 0.5;
-        }
+        if (lastM.x !== 0) { v.tx += (e.clientX - lastM.x) * 0.5; v.ty += (e.clientY - lastM.y) * 0.5; }
         lastM.x = e.clientX; lastM.y = e.clientY;
     });
 
-    modeBtn.onclick = () => {
-        document.body.classList.toggle('light-mode');
-        isLightMode = !isLightMode;
-    };
-
-    document.getElementById('burger').onclick = function() {
-        this.classList.toggle('active');
-    };
+    modeBtn.onclick = () => { document.body.classList.toggle('light-mode'); isLightMode = !isLightMode; };
+    document.getElementById('burger').onclick = function() { this.classList.toggle('active'); };
 
     window.addEventListener('resize', init);
     init(); loop();
