@@ -41,7 +41,6 @@
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        /* 🚀 逻辑点击层：覆盖在所有图层最上方 */
         .click-mask {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 100; cursor: pointer;
@@ -51,7 +50,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background-size: contain; background-repeat: no-repeat; background-position: center top; 
             transition: opacity 0.1s steps(1); 
-            pointer-events: none; /* 视觉层不接受点击 */
+            pointer-events: none; 
         }
         
         .eye-dark { background-image: url('./images/eye-dark.png'); }
@@ -89,7 +88,7 @@
         .nav-item::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 1px; background: white; transition: width 0.3s ease; }
         .nav-item:hover::after { width: calc(100% - 6px); }
 
-        /* 5. 侧滑菜单 (0.03透明 + 下划线 Hover) */
+        /* 5. 侧滑菜单 (0.03透明) */
         .menu-overlay {
             position: fixed; top: 0; right: -450px; width: 400px; height: 100%;
             background: rgba(0, 0, 0, 0.03); 
@@ -145,7 +144,6 @@
 
 <div class="lamp-toggle" id="lampControl">
     <div class="click-mask" id="clickMask"></div>
-
     <div class="layer-part eye-dark"></div>
     <div class="layer-part eye-light"></div>
     <div class="line-group">
@@ -185,28 +183,35 @@
 
 <script>
     const clickMask = document.getElementById('clickMask');
-    let isLightMode = false, colorTransition = 0; 
+    // 🚀 初始化：检查 sessionStorage
+    let isLightMode = sessionStorage.getItem('portfolio-mode') === 'light';
+    let colorTransition = isLightMode ? 1 : 0; 
 
-    // 🚀 核心点击分区逻辑：锁定 20% 分界线
+    // 如果存的是 light，加载时立即应用
+    if (isLightMode) {
+        document.body.classList.add('light-mode');
+    }
+
+    // 🚀 核心点击逻辑
     clickMask.onclick = function(e) {
         const rect = this.getBoundingClientRect();
-        // 计算点击位置相对于容器顶部的精确垂直距离
         const relativeY = e.clientY - rect.top;
         const percentY = (relativeY / rect.height) * 100;
 
-        console.log("Click detected at height %:", percentY); // 你可以在控制台查看点击高度
-
         if (percentY <= 20) {
-            // 🚀 20% 之上（眼睛）-> 回主页
+            // 20% 之上（眼睛）-> 回主页
             window.location.href = 'index.html';
         } else {
-            // 🚀 20% 之下（绳子和手柄）-> 切换昼夜
-            document.body.classList.toggle('light-mode');
+            // 20% 之下（绳子和手柄）-> 切换昼夜
             isLightMode = !isLightMode;
+            document.body.classList.toggle('light-mode', isLightMode);
+            
+            // 🚀 保存到会话存储（刷新会消失，跳转会保留）
+            sessionStorage.setItem('portfolio-mode', isLightMode ? 'light' : 'dark');
         }
     };
 
-    // --- 宇宙逻辑维持原样 ---
+    // --- 宇宙逻辑 ---
     const canvas = document.getElementById('universe');
     const ctx = canvas.getContext('2d');
     const config = { starCount: 45, particleCount: 45000, baseSize: 40, longAxisRatio: 2.2, sharpness: 0.45, friction: 0.94, ease: 0.06 };
@@ -287,6 +292,7 @@
         v.tx *= config.friction; v.ty *= config.friction;
         v.x += (v.tx - v.x) * config.ease; v.y += (v.ty - v.y) * config.ease;
         const step = 16.6 / 1000;
+        // 🚀 同步渐变变量
         if (isLightMode && colorTransition < 1) colorTransition = Math.min(1, colorTransition + step);
         if (!isLightMode && colorTransition > 0) colorTransition = Math.max(0, colorTransition - step);
         stars.forEach(s => { s.update(); s.draw(v.x, v.y); });
