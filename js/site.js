@@ -1,0 +1,307 @@
+/* ═══════════════════════════════════════════
+   site.js — new single-page logic
+   (global.js handles lamp, stars, burger menu)
+═══════════════════════════════════════════ */
+
+/* ── Sync star color transition when lamp toggled on index.html ── */
+(function() {
+  const mask = document.getElementById('clickMask');
+  if (!mask) return;
+  mask.addEventListener('click', () => {
+    if (typeof isLightMode !== 'undefined') {
+      isLightMode = document.body.classList.contains('light-mode');
+    }
+  });
+})();
+
+/* ── Topbar HOME ── */
+const topbarHome = document.getElementById('topbarHome');
+if (topbarHome) {
+  topbarHome.addEventListener('click', e => {
+    e.preventDefault();
+    const el = document.getElementById('home');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  });
+}
+
+/* ── Smooth scroll for all #hash links ── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+
+/* ── Back to top ── */
+const backTop = document.getElementById('backTop');
+if (backTop) backTop.addEventListener('click', e => { e.preventDefault(); scrollTo({ top: 0, behavior: 'smooth' }); });
+
+/* ═══════════════════════════════════════════
+   LANGUAGE SWITCHING
+═══════════════════════════════════════════ */
+const STRINGS = {
+  en: {
+    'nav-home':    'HOME',
+    'nav-work':    'WORK',
+    'nav-about':   'ABOUT',
+    'nav-contact': 'CONTACT',
+    'nav-resume':  'RESUME',
+    'home-hi':     "Hi! I'm Najisa!",
+    'home-sub':    'Digital Artist · Media & Computational Designer',
+    'work-selected': 'Selected Works',
+    'more-works':  'More Works',
+    'about-p1':    'I am a digital artist and media designer exploring the transient boundaries between computational logic and human sensation.',
+    'about-p2':    'Based in New York, my practice involves generative systems, material studies, and interactive environments.',
+    'about-p3':    'Materializing the invisible data structures into evocative, tangible experiences.',
+    'reach-out':   'reach out!',
+    'back-top':    'Back to Top',
+    'copyright':   '© 2026 Najisa. All rights reserved.',
+    'scroll-down': 'scroll',
+  },
+  zh: {
+    'nav-home':    '主页',
+    'nav-work':    '作品',
+    'nav-about':   '关于',
+    'nav-contact': '联系',
+    'nav-resume':  '简历',
+    'home-hi':     '嗨！我是 Najisa！',
+    'home-sub':    '数字艺术家 · 媒体与计算设计师',
+    'work-selected': '精选作品',
+    'more-works':  '更多作品',
+    'about-p1':    '我是一名数字艺术家和媒体设计师，探索计算逻辑与人类感知之间流动的边界。',
+    'about-p2':    '常驻纽约，我的创作涉及生成系统、材料研究与交互环境。',
+    'about-p3':    '将不可见的数据结构物化为令人动容的有形体验。',
+    'reach-out':   '联系我！',
+    'back-top':    '返回顶部',
+    'copyright':   '© 2026 Najisa. 版权所有。',
+    'scroll-down': '向下滚动',
+  },
+  ja: {
+    'nav-home':    'HOME',
+    'nav-work':    '作品',
+    'nav-about':   'について',
+    'nav-contact': '連絡',
+    'nav-resume':  '履歴書',
+    'home-hi':     'はじめまして、Najisaです！',
+    'home-sub':    'デジタルアーティスト · メディア＆計算デザイナー',
+    'work-selected': '選出された作品',
+    'more-works':  'もっと見る',
+    'about-p1':    '私はデジタルアーティスト・メディアデザイナーとして、計算論理と人間の感覚の境界を探求しています。',
+    'about-p2':    'ニューヨークを拠点に、生成システム、素材研究、インタラクティブ環境の制作に取り組んでいます。',
+    'about-p3':    '見えないデータ構造を感動的で具体的な体験へと変換しています。',
+    'reach-out':   'ご連絡ください！',
+    'back-top':    'トップへ',
+    'copyright':   '© 2026 Najisa. All rights reserved.',
+    'scroll-down': 'スクロール',
+  }
+};
+
+let lang = sessionStorage.getItem('nj-lang') || 'en';
+function applyLang(l) {
+  lang = l;
+  sessionStorage.setItem('nj-lang', l);
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (STRINGS[l] && STRINGS[l][key]) el.textContent = STRINGS[l][key];
+  });
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+  // Restore correct colors after text swap (reveal class hides text initially)
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.classList.contains('in-view')) el.style.color = ''; // let CSS handle it
+  });
+}
+document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => applyLang(btn.dataset.lang)));
+applyLang(lang);
+
+/* ═══════════════════════════════════════════
+   CURTAIN ANIMATION
+═══════════════════════════════════════════ */
+const curtain = document.getElementById('curtain');
+const about   = document.getElementById('about');
+if (curtain && about) {
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { curtain.classList.add('raised'); obs.disconnect(); }
+  }, { threshold: 0.05 });
+  obs.observe(about);
+}
+
+/* ═══════════════════════════════════════════
+   TEXT REVEAL ON SCROLL
+═══════════════════════════════════════════ */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in-view');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ═══════════════════════════════════════════
+   SELECTED WORKS GRID
+═══════════════════════════════════════════ */
+const selGrid = document.getElementById('selGrid');
+if (selGrid && typeof worksData !== 'undefined') {
+  worksData.slice(0, 4).forEach(work => {
+    const card = document.createElement('div');
+    card.className = 'sel-card';
+
+    let src = work.thumbnail || '';
+    if (!src && work.mediaType === 'image')   src = work.path;
+    if (!src && work.mediaType === 'youtube') src = `https://img.youtube.com/vi/${work.path.split('?')[0]}/mqdefault.jpg`;
+
+    card.innerHTML = `
+      <div class="sel-thumb">${src ? `<img src="${src}" alt="${work.name}" loading="lazy">` : ''}</div>
+      <div class="sel-type">${work.year} / ${work.category}</div>
+      <div class="sel-name">${work.name}</div>
+    `;
+    const img = card.querySelector('img');
+    if (img) {
+      img.addEventListener('load', () => img.classList.add('loaded'));
+      if (img.complete) img.classList.add('loaded');
+    }
+    card.addEventListener('click', () => openLightbox(work));
+    selGrid.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   LIGHTBOX
+═══════════════════════════════════════════ */
+function openLightbox(work) {
+  const lb  = document.getElementById('lightbox');
+  const med = document.getElementById('lbMedia');
+  if (!lb || !med) return;
+  med.innerHTML = '';
+  if (work.link) {
+    med.innerHTML = `<iframe src="${work.link}" allowfullscreen></iframe>`;
+  } else if (work.mediaType === 'image') {
+    med.innerHTML = `<img src="${work.path}" alt="${work.name}">`;
+  } else if (work.mediaType === 'pdf') {
+    med.innerHTML = `<iframe src="${work.path}"></iframe>`;
+  } else {
+    const vid = work.path.split('?')[0];
+    med.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
+  }
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  const lb  = document.getElementById('lightbox');
+  const med = document.getElementById('lbMedia');
+  lb?.classList.remove('active');
+  if (med) med.innerHTML = '';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+/* ═══════════════════════════════════════════
+   AVATAR → ABOUT PHOTO MORPH
+═══════════════════════════════════════════ */
+(function () {
+  const morphEl    = document.getElementById('morphAvatar');
+  const morphDark  = morphEl?.querySelector('.morph-img-dark');
+  const morphLight = morphEl?.querySelector('.morph-img-light');
+  const avatarImg  = document.querySelector('.avatar-img-dark');
+  const avatarWrap = document.querySelector('.avatar-wrap');
+  const frame      = document.querySelector('.photo-frame');
+  const about      = document.getElementById('about');
+  if (!morphEl || !morphDark || !morphLight || !avatarImg || !avatarWrap || !frame || !about) return;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function easeInOut(t)  { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2; }
+
+  let lastP = -1;
+  let aboutAbsTop = 0;
+
+  function recalc() {
+    aboutAbsTop = about.getBoundingClientRect().top + window.scrollY;
+  }
+  recalc();
+  window.addEventListener('resize', () => { lastP = -1; recalc(); }, { passive: true });
+
+  frame.style.opacity = '0'; /* hidden — morph handles the visual */
+
+  function setMorphImages(op) {
+    /* same image as home — image opacity never changes (always full) */
+    const isLight = document.body.classList.contains('light-mode');
+    morphDark.style.opacity  = isLight ? '0' : String(op);
+    morphLight.style.opacity = isLight ? String(op) : '0';
+  }
+
+  function update() {
+    const scrollY = window.scrollY;
+    const viewH   = window.innerHeight;
+    const start   = aboutAbsTop - viewH * 0.95;
+    const end     = aboutAbsTop - viewH * 0.15;
+    const p = Math.max(0, Math.min(1, (scrollY - start) / (end - start)));
+
+    if (Math.abs(p - lastP) < 0.002 && p > 0 && p < 1) return;
+    lastP = p;
+
+    if (p <= 0 || p >= 1) {
+      morphEl.style.opacity = '0';
+      avatarWrap.classList.toggle('morph-hide', p >= 1);
+      frame.style.opacity   = '1';
+      setMorphImages(1);
+      return;
+    }
+
+    const aRect = avatarImg.getBoundingClientRect();
+    const fRect = frame.getBoundingClientRect();
+
+    const fPadLR = 20, fPadT = 20, fPadB = 66;
+    const fImgW  = fRect.width - fPadLR * 2;
+    const fImgH  = 175;
+
+    const aCx = aRect.left + aRect.width  / 2;
+    const aCy = aRect.top  + aRect.height / 2;
+    const fCx = fRect.left + fPadLR + fImgW / 2;
+    const fCy = fRect.top  + fPadT  + fImgH / 2;
+
+    const ep = easeInOut(p);
+
+    const imgW = lerp(aRect.width,  fImgW, ep);
+    const imgH = lerp(aRect.height, fImgH, ep);
+    const padLR = lerp(0, fPadLR, ep);
+    const padT  = lerp(0, fPadT,  ep);
+    const padB  = lerp(0, fPadB,  ep);
+
+    const outerW = imgW + padLR * 2;
+    const outerH = imgH + padT + padB;
+
+    const cx = lerp(aCx, fCx, ep);
+    const cy = lerp(aCy, fCy, ep);
+
+    const morphLeft = cx - padLR - imgW / 2;
+    const morphTop  = cy - padT  - imgH / 2;
+
+    /* image stays fully visible — only frame bg fades in */
+    setMorphImages(1, 0);
+
+    const fa  = easeInOut(p);
+    const rot = lerp(0, -2, ep);
+    const isLt = document.body.classList.contains('light-mode');
+
+    morphEl.style.opacity     = '1';
+    morphEl.style.width       = outerW + 'px';
+    morphEl.style.height      = outerH + 'px';
+    morphEl.style.left        = morphLeft + 'px';
+    morphEl.style.top         = morphTop  + 'px';
+    morphEl.style.padding     = '0';
+    morphEl.style.borderStyle = 'solid';
+    morphEl.style.borderWidth = `${padT}px ${padLR}px ${padB}px ${padLR}px`;
+    morphEl.style.borderColor = isLt ? `rgba(17,17,17,${fa})` : `rgba(255,255,255,${fa})`;
+    morphEl.style.background  = 'transparent';
+    morphEl.style.boxShadow   = fa > 0.1 ? `0 8px ${Math.round(32*fa)}px rgba(0,0,0,${(0.45*fa).toFixed(2)})` : 'none';
+    morphEl.style.transform   = `rotate(${rot}deg)`;
+
+    avatarWrap.classList.toggle('morph-hide', p >= 0.06);
+    frame.style.opacity = '0';
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();

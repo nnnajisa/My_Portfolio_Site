@@ -1,89 +1,40 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resume | Najisa</title>
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      background: black;
-      transition: background-color 0.4s ease;
-    }
-
-body.light-mode {
-  background: white;
-}
-
-.resume-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.08);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-body.light-mode .resume-overlay {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.resume-viewer {
-  width: 85vw;
-  height: 90vh;
-  border: none;
-  background: white;
-  display: block;
-  cursor: default;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
-}
-
-body.light-mode .resume-viewer {
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
-}
-
-@media (max-width: 768px) {
-  .resume-viewer {
-    width: 94vw;
-    height: 88vh;
-  }
-}
-
+    html,body{margin:0;padding:0;background:#000;color:#e8e2d9;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;height:100%;overflow:hidden;}
+    body.light-mode{background:#f0ebe3;color:#1a150e;}
+    .r-label{position:fixed;top:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,0.35);z-index:10;pointer-events:none;}
+    body.light-mode .r-label{color:rgba(26,21,14,0.35);}
+    .r-back{position:fixed;top:18px;left:20px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.4);text-decoration:none;z-index:20;transition:color 0.3s;}
+    .r-back:hover{color:rgba(255,255,255,0.85);}
+    body.light-mode .r-back{color:rgba(26,21,14,0.4);}
+    body.light-mode .r-back:hover{color:rgba(26,21,14,0.85);}
+    .r-dl{position:fixed;top:18px;right:20px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.4);text-decoration:none;z-index:20;display:flex;align-items:center;gap:6px;transition:color 0.3s;}
+    .r-dl:hover{color:rgba(255,255,255,0.85);}
+    body.light-mode .r-dl{color:rgba(26,21,14,0.4);}
+    body.light-mode .r-dl:hover{color:rgba(26,21,14,0.85);}
+    .r-dl svg{width:13px;height:13px;}
+    .r-frame-wrap{display:flex;align-items:center;justify-content:center;height:100vh;padding-top:56px;box-sizing:border-box;}
+    .r-frame{width:82vw;height:90%;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.45);}
+    @media(max-width:768px){.r-frame{width:95vw;}}
   </style>
 </head>
 <body>
-  <div class="resume-overlay" onclick="closeResume()">
-    <iframe
-      class="resume-viewer"
-      src="./assets/Resume-Amber He-2026.pdf"
-      title="Resume Preview">
-    </iframe>
+  <span class="r-label">Resume</span>
+  <a class="r-back" href="index.html">← Back</a>
+  <a class="r-dl" href="./assets/Resume-Amber He-2026.pdf" download>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Download
+  </a>
+  <div class="r-frame-wrap">
+    <iframe class="r-frame" src="./assets/Resume-Amber He-2026.pdf" title="Resume"></iframe>
   </div>
-
   <script>
-    const isLightMode = sessionStorage.getItem('portfolio-mode') === 'light';
-    if (isLightMode) {
-      document.body.classList.add('light-mode');
-    }
-
-    function closeResume() {
-      if (document.referrer && document.referrer !== window.location.href) {
-        window.location.href = document.referrer;
-      } else {
-        window.location.href = "index.html";
-      }
-    }
-
-    const viewer = document.querySelector('.resume-viewer');
-    viewer.addEventListener('click', function(e) {
-      e.stopPropagation();
-    });
+    if (sessionStorage.getItem('portfolio-mode')==='light') document.body.classList.add('light-mode');
   </script>
-
 </body>
 </html>
