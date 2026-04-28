@@ -97,7 +97,9 @@ const STRINGS = {
   }
 };
 
+const LANG_LABELS = { en: 'EN', zh: '中', ja: '日' };
 let lang = sessionStorage.getItem('nj-lang') || 'en';
+
 function applyLang(l) {
   lang = l;
   sessionStorage.setItem('nj-lang', l);
@@ -105,13 +107,16 @@ function applyLang(l) {
     const key = el.dataset.i18n;
     if (STRINGS[l] && STRINGS[l][key]) el.textContent = STRINGS[l][key];
   });
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
-  // Restore correct colors after text swap (reveal class hides text initially)
+  const cur = document.getElementById('langCurrent');
+  if (cur) cur.textContent = LANG_LABELS[l] || l.toUpperCase();
+  document.querySelectorAll('.lang-opt').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
   document.querySelectorAll('.reveal').forEach(el => {
-    if (el.classList.contains('in-view')) el.style.color = ''; // let CSS handle it
+    if (el.classList.contains('in-view')) el.style.color = '';
   });
 }
-document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => applyLang(btn.dataset.lang)));
+
+document.addEventListener('langchange', e => applyLang(e.detail.lang));
+
 applyLang(lang);
 
 /* ═══════════════════════════════════════════

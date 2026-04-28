@@ -52,9 +52,9 @@ if (isLightMode) document.body.classList.add('light-mode');
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
       const r = Math.random();
-      if      (r > 0.8) { this.idx = 0; this.sc = 0.45; this.bAmp = 0.35; this.bSpd = 0.005; }
-      else if (r > 0.4) { this.idx = 1; this.sc = 0.28; this.bAmp = 0.15; this.bSpd = 0.012; }
-      else              { this.idx = 2; this.sc = 0.15; this.bAmp = 0.05; this.bSpd = 0.020; }
+      if      (r > 0.8) { this.idx = 0; this.sc = 0.45; this.bAmp = 0.12; this.bSpd = 0.004; }
+      else if (r > 0.4) { this.idx = 1; this.sc = 0.28; this.bAmp = 0.06; this.bSpd = 0.008; }
+      else              { this.idx = 2; this.sc = 0.15; this.bAmp = 0.02; this.bSpd = 0.012; }
       this.op   = 0;
       this.life = 10000 + Math.random() * 10000;
       if (!keepAge) this.age = 0;
@@ -70,7 +70,7 @@ if (isLightMode) document.body.classList.add('light-mode');
       if (this.age >= this.life) this.reset(false);
     }
     draw(ox, oy) {
-      const finalSc = this.sc * (1 + Math.sin(this.bPh) * this.bAmp) * (1 + Math.sin(this.tPh) * 0.1);
+      const finalSc = this.sc * (1 + Math.sin(this.bPh) * this.bAmp) * (1 + Math.sin(this.tPh) * 0.03);
       const dImg = motherCache.dark[this.idx];
       const lImg = motherCache.light[this.idx];
       const dx = this.x - (dImg.width  * finalSc) / 2 + ox * (2.5 - this.idx);
@@ -163,19 +163,33 @@ if (isLightMode) document.body.classList.add('light-mode');
   });
 })();
 
-/* ── Lang buttons ── */
+/* ── Lang picker dropdown ── */
 (function () {
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      sessionStorage.setItem('nj-lang', btn.dataset.lang);
+  const LABELS = { en: 'EN', zh: '中', ja: '日' };
+  const picker  = document.getElementById('langPicker');
+  const current = document.getElementById('langCurrent');
+  if (!picker || !current) return;
+
+  const saved = sessionStorage.getItem('nj-lang') || 'en';
+  current.textContent = LABELS[saved] || 'EN';
+  document.querySelectorAll('.lang-opt').forEach(b => b.classList.toggle('active', b.dataset.lang === saved));
+
+  current.addEventListener('click', e => {
+    e.stopPropagation();
+    picker.classList.toggle('open');
+  });
+  document.querySelectorAll('.lang-opt').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const l = btn.dataset.lang;
+      sessionStorage.setItem('nj-lang', l);
+      current.textContent = LABELS[l] || l;
+      document.querySelectorAll('.lang-opt').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+      picker.classList.remove('open');
+      document.dispatchEvent(new CustomEvent('langchange', { detail: { lang: l } }));
     });
   });
-  const saved = sessionStorage.getItem('nj-lang');
-  if (saved) {
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === saved));
-  }
+  document.addEventListener('click', () => picker.classList.remove('open'));
 })();
 
 /* ── Topbar scroll shadow ── */
@@ -218,7 +232,7 @@ if (isLightMode) document.body.classList.add('light-mode');
 
   const hoverSel = 'a, button, [role="button"], .chip, .wk-card, .sel-card, ' +
     '.ci, .wk-arrow, .burger-icon, .click-mask, .more-link, ' +
-    '.lang-btn, .topbar-home, .menu-link, .hnb-link, ' +
+    '.lang-current, .lang-opt, .topbar-home, .menu-link, .hnb-link, ' +
     '.back-top, .footer-nav-link, .progress-thumb, label';
 
   document.querySelectorAll(hoverSel).forEach(el => {

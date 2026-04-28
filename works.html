@@ -30,10 +30,13 @@
   <div class="topbar-lamp-space"></div>
   <a class="topbar-home" href="index.html">HOME</a>
   <div class="topbar-right">
-    <div class="lang-picker">
-      <button class="lang-btn active" data-lang="en">EN</button><span>|</span>
-      <button class="lang-btn" data-lang="zh">中</button><span>|</span>
-      <button class="lang-btn" data-lang="ja">日</button>
+    <div class="lang-picker" id="langPicker">
+      <button class="lang-current" id="langCurrent">EN</button>
+      <div class="lang-dropdown">
+        <button class="lang-opt" data-lang="en">EN</button>
+        <button class="lang-opt" data-lang="zh">中</button>
+        <button class="lang-opt" data-lang="ja">日</button>
+      </div>
     </div>
     <div class="burger-icon" id="burger"><span></span><span></span></div>
   </div>

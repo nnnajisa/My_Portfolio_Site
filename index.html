@@ -9,7 +9,7 @@
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; overflow-x: hidden; }
     body.light-mode { background: #fff; color: #000; }
   </style>
-  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/main.css?v=2">
 </head>
 <body>
 <div class="cursor-dot" id="cursorDot"></div>
@@ -52,12 +52,13 @@
   <div class="topbar-lamp-space"></div>
   <a class="topbar-home" id="topbarHome" href="#home">HOME</a>
   <div class="topbar-right">
-    <div class="lang-picker">
-      <button class="lang-btn active" data-lang="en">EN</button>
-      <span>|</span>
-      <button class="lang-btn" data-lang="zh">中</button>
-      <span>|</span>
-      <button class="lang-btn" data-lang="ja">日</button>
+    <div class="lang-picker" id="langPicker">
+      <button class="lang-current" id="langCurrent">EN</button>
+      <div class="lang-dropdown">
+        <button class="lang-opt" data-lang="en">EN</button>
+        <button class="lang-opt" data-lang="zh">中</button>
+        <button class="lang-opt" data-lang="ja">日</button>
+      </div>
     </div>
     <div class="burger-icon" id="burger"><span></span><span></span></div>
   </div>
@@ -219,18 +220,10 @@
         </nav>
         <p class="copyright" data-i18n="copyright">© 2026 Najisa. All rights reserved.</p>
       </div>
-      <!-- Eye logo (no shoulders) -->
+      <!-- Eye logo -->
       <div class="footer-eye">
-        <svg viewBox="0 0 110 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="55" cy="34" rx="50" ry="30" stroke="currentColor" stroke-width="1.2"/>
-          <circle  cx="55" cy="34" r="15"  fill="currentColor" opacity="0.45"/>
-          <circle  cx="62" cy="27" r="5"   fill="black"        opacity="0.7"/>
-          <line x1="55" y1="4"   x2="55"  y2="-4"  stroke="currentColor" stroke-width="1.2"/>
-          <line x1="78" y1="12"  x2="84"  y2="5"   stroke="currentColor" stroke-width="1.2"/>
-          <line x1="32" y1="12"  x2="26"  y2="5"   stroke="currentColor" stroke-width="1.2"/>
-          <line x1="100" y1="30" x2="108" y2="30"  stroke="currentColor" stroke-width="1.2"/>
-          <line x1="10"  y1="30" x2="2"   y2="30"  stroke="currentColor" stroke-width="1.2"/>
-        </svg>
+        <img class="feye feye-dark"  src="images/i-dark.png"  alt="">
+        <img class="feye feye-light" src="images/i-light.png" alt="">
       </div>
     </footer>
   </div>
