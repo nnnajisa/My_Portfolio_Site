@@ -18,7 +18,7 @@ worksData.forEach(work => {
   card.dataset.cat  = work.category;
   let src = work.thumbnail || '';
   if (!src && work.mediaType === 'image')   src = work.path;
-  if (!src && work.mediaType === 'youtube') src = `https://img.youtube.com/vi/${work.path.split('?')[0]}/mqdefault.jpg`;
+  if (!src && work.mediaType === 'youtube') src = `https://img.youtube.com/vi/${work.path.split('?')[0]}/maxresdefault.jpg`;
   card.innerHTML = `
     <div class="wk-thumb">${src ? `<img src="${src}" alt="${work.name}" loading="lazy">` : ''}</div>
     <div class="wk-type">${work.year} / ${work.category}</div>

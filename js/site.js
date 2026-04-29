@@ -155,7 +155,7 @@ if (selGrid && typeof worksData !== 'undefined') {
 
     let src = work.thumbnail || '';
     if (!src && work.mediaType === 'image')   src = work.path;
-    if (!src && work.mediaType === 'youtube') src = `https://img.youtube.com/vi/${work.path.split('?')[0]}/mqdefault.jpg`;
+    if (!src && work.mediaType === 'youtube') src = `https://img.youtube.com/vi/${work.path.split('?')[0]}/maxresdefault.jpg`;
 
     card.innerHTML = `
       <div class="sel-thumb">${src ? `<img src="${src}" alt="${work.name}" loading="lazy">` : ''}</div>
@@ -204,109 +204,113 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
 
 /* ═══════════════════════════════════════════
    AVATAR → ABOUT PHOTO MORPH
+   One element, always visible, just moves.
 ═══════════════════════════════════════════ */
 (function () {
-  const morphEl    = document.getElementById('morphAvatar');
-  const morphDark  = morphEl?.querySelector('.morph-img-dark');
-  const morphLight = morphEl?.querySelector('.morph-img-light');
-  const avatarImg  = document.querySelector('.avatar-img-dark');
-  const avatarWrap = document.querySelector('.avatar-wrap');
-  const frame      = document.querySelector('.photo-frame');
-  const about      = document.getElementById('about');
-  if (!morphEl || !morphDark || !morphLight || !avatarImg || !avatarWrap || !frame || !about) return;
+  const morphEl       = document.getElementById('morphAvatar');
+  const morphDark     = morphEl?.querySelector('.morph-img-dark');
+  const morphLight    = morphEl?.querySelector('.morph-img-light');
+  const avatarImgD    = document.querySelector('.avatar-img-dark');
+  const avatarImgL    = document.querySelector('.avatar-img-light');
+  const avatarWrap    = document.querySelector('.avatar-wrap');
+  const frame         = document.querySelector('.photo-frame');
+  const about         = document.getElementById('about');
+  if (!morphEl || !morphDark || !morphLight || !avatarImgD || !avatarWrap || !frame || !about) return;
 
   function lerp(a, b, t) { return a + (b - a) * t; }
   function easeInOut(t)  { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2; }
 
-  let lastP = -1;
-  let aboutAbsTop = 0;
+  let aDoc = {}, fDoc = {}, aboutAbsTop = 0, rafId = null, morphReady = false;
 
   function recalc() {
-    aboutAbsTop = about.getBoundingClientRect().top + window.scrollY;
+    const sy = window.scrollY;
+    const aR = avatarImgD.getBoundingClientRect();
+    const fR = frame.getBoundingClientRect();
+    aDoc = { top: aR.top + sy, left: aR.left, width: aR.width, height: aR.height };
+    fDoc = { top: fR.top + sy, left: fR.left, width: fR.width, height: fR.height };
+    aboutAbsTop = about.getBoundingClientRect().top + sy;
   }
-  recalc();
-  window.addEventListener('resize', () => { lastP = -1; recalc(); }, { passive: true });
 
-  frame.style.opacity = '0'; /* hidden — morph handles the visual */
+  /* Delay until avatar fadeUp animation finishes (~1.5s), then hand off */
+  recalc(); /* get aboutAbsTop early for p computation */
+  setTimeout(() => {
+    recalc(); /* re-read accurate positions after animation */
+    /* Hide real images — morphEl is the only visible image from now on */
+    avatarImgD.style.cssText = 'opacity:0!important;transition:none!important';
+    if (avatarImgL) avatarImgL.style.cssText = 'opacity:0!important;transition:none!important';
+    frame.style.opacity = '0';
+    morphReady = true;
+    update();
+  }, 1500);
 
-  function setMorphImages(op) {
-    /* same image as home — image opacity never changes (always full) */
+  window.addEventListener('resize', () => { recalc(); if (morphReady) update(); }, { passive: true });
+
+  function setMorphImages() {
     const isLight = document.body.classList.contains('light-mode');
-    morphDark.style.opacity  = isLight ? '0' : String(op);
-    morphLight.style.opacity = isLight ? String(op) : '0';
+    morphDark.style.opacity  = isLight ? '0' : '1';
+    morphLight.style.opacity = isLight ? '1' : '0';
   }
 
   function update() {
+    rafId = null;
+    if (!morphReady) return;
+
     const scrollY = window.scrollY;
     const viewH   = window.innerHeight;
     const start   = aboutAbsTop - viewH * 0.95;
     const end     = aboutAbsTop - viewH * 0.15;
-    const p = Math.max(0, Math.min(1, (scrollY - start) / (end - start)));
-
-    if (Math.abs(p - lastP) < 0.002 && p > 0 && p < 1) return;
-    lastP = p;
-
-    if (p <= 0 || p >= 1) {
-      morphEl.style.opacity = '0';
-      avatarWrap.classList.toggle('morph-hide', p >= 1);
-      frame.style.opacity   = '1';
-      setMorphImages(1);
-      return;
-    }
-
-    const aRect = avatarImg.getBoundingClientRect();
-    const fRect = frame.getBoundingClientRect();
+    const p  = Math.max(0, Math.min(1, (scrollY - start) / (end - start)));
+    const ep = easeInOut(p);
+    const isLt = document.body.classList.contains('light-mode');
 
     const fPadLR = 20, fPadT = 20, fPadB = 66;
-    const fImgW  = fRect.width - fPadLR * 2;
-    const fImgH  = 175;
+    const fImgW  = fDoc.width - fPadLR * 2;
+    const fImgH  = 230;
 
-    const aCx = aRect.left + aRect.width  / 2;
-    const aCy = aRect.top  + aRect.height / 2;
-    const fCx = fRect.left + fPadLR + fImgW / 2;
-    const fCy = fRect.top  + fPadT  + fImgH / 2;
+    /* Viewport positions — pure math, zero layout reads */
+    const aTop = aDoc.top - scrollY, aLeft = aDoc.left;
+    const fTop = fDoc.top - scrollY, fLeft = fDoc.left;
 
-    const ep = easeInOut(p);
+    const aCx = aLeft + aDoc.width  / 2;
+    const aCy = aTop  + aDoc.height / 2;
+    const fCx = fLeft + fPadLR + fImgW / 2;
+    const fCy = fTop  + fPadT  + fImgH  / 2;
 
-    const imgW = lerp(aRect.width,  fImgW, ep);
-    const imgH = lerp(aRect.height, fImgH, ep);
+    const imgW  = lerp(aDoc.width,  fImgW,  ep);
+    const imgH  = lerp(aDoc.height, fImgH,  ep);
     const padLR = lerp(0, fPadLR, ep);
     const padT  = lerp(0, fPadT,  ep);
     const padB  = lerp(0, fPadB,  ep);
-
-    const outerW = imgW + padLR * 2;
-    const outerH = imgH + padT + padB;
+    const rot   = lerp(0, -2, ep);
+    const fa    = ep;
 
     const cx = lerp(aCx, fCx, ep);
     const cy = lerp(aCy, fCy, ep);
 
-    const morphLeft = cx - padLR - imgW / 2;
-    const morphTop  = cy - padT  - imgH / 2;
+    const offScreen = cy < -300 || cy > viewH + 300;
 
-    /* image stays fully visible — only frame bg fades in */
-    setMorphImages(1, 0);
+    setMorphImages();
 
-    const fa  = easeInOut(p);
-    const rot = lerp(0, -2, ep);
-    const isLt = document.body.classList.contains('light-mode');
-
-    morphEl.style.opacity     = '1';
-    morphEl.style.width       = outerW + 'px';
-    morphEl.style.height      = outerH + 'px';
-    morphEl.style.left        = morphLeft + 'px';
-    morphEl.style.top         = morphTop  + 'px';
-    morphEl.style.padding     = '0';
-    morphEl.style.borderStyle = 'solid';
-    morphEl.style.borderWidth = `${padT}px ${padLR}px ${padB}px ${padLR}px`;
-    morphEl.style.borderColor = isLt ? `rgba(17,17,17,${fa})` : `rgba(255,255,255,${fa})`;
-    morphEl.style.background  = 'transparent';
-    morphEl.style.boxShadow   = fa > 0.1 ? `0 8px ${Math.round(32*fa)}px rgba(0,0,0,${(0.45*fa).toFixed(2)})` : 'none';
-    morphEl.style.transform   = `rotate(${rot}deg)`;
-
-    avatarWrap.classList.toggle('morph-hide', p >= 0.06);
-    frame.style.opacity = '0';
+    morphEl.style.cssText = `
+      position:fixed;z-index:200;pointer-events:none;overflow:hidden;
+      opacity:${offScreen ? 0 : 1};
+      width:${imgW + padLR * 2}px;
+      height:${imgH + padT + padB}px;
+      left:${cx - padLR - imgW / 2}px;
+      top:${cy - padT - imgH / 2}px;
+      border-style:solid;
+      border-width:${padT}px ${padLR}px ${padB}px ${padLR}px;
+      border-color:${isLt ? `rgba(17,17,17,${fa})` : `rgba(255,255,255,${fa})`};
+      background:transparent;
+      box-shadow:${fa > 0.1 ? `0 8px ${Math.round(32 * fa)}px rgba(0,0,0,${(0.45 * fa).toFixed(2)})` : 'none'};
+      transform:rotate(${rot}deg);
+    `;
   }
 
-  window.addEventListener('scroll', update, { passive: true });
-  update();
+  function onScroll() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(update);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
 })();
