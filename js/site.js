@@ -200,6 +200,19 @@ function closeLightbox() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
 /* ═══════════════════════════════════════════
+   PHONE PICKER
+═══════════════════════════════════════════ */
+(function () {
+  const picker = document.getElementById('phonePicker');
+  if (!picker) return;
+  picker.addEventListener('click', e => {
+    e.stopPropagation();
+    picker.classList.toggle('open');
+  });
+  document.addEventListener('click', () => picker.classList.remove('open'));
+})();
+
+/* ═══════════════════════════════════════════
    AVATAR PARTICLE DOTS — JS-generated, fine & dense
 ═══════════════════════════════════════════ */
 (function () {
