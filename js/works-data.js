@@ -9,9 +9,9 @@ const worksData = [
   { name: "Introductory Video",              type: "Video Art",         year: "S2024", path: "ActiIkX53vs",                          mediaType: "youtube", category: "Motion" },
   { name: "Spicy Strip",                     type: "Video Art",         year: "F2024", path: "8rCJO6EROGg",                          mediaType: "youtube", category: "Motion" },
 
-  { name: "Wake Up!",                        type: "Craft",             year: "F2025", path: "./images/cover/Wake Up!_1.jpg",         mediaType: "image",   category: "Interactive" },
-  { name: "Anatomy",                         type: "Craft",             year: "F2025", path: "./images/cover/Anatomy.jpg",            mediaType: "image",   category: "Interactive" },
-  { name: "The Supporter",                   type: "Craft",             year: "F2025", path: "./images/cover/The Supporter.jpg",      mediaType: "image",   category: "Interactive" },
+  { name: "Wake Up!",                        type: "Craft",             year: "F2025", path: "./images/cover/Wake Up!_1.jpg",         mediaType: "image",   link: "https://docs.google.com/document/d/1CdgVwHnZT_aUMaHwX5jimWVnyP8bU4Rk70FCuxBg8_I/preview?tab=t.9655ct2g9beo", category: "Interactive" },
+  { name: "Anatomy",                         type: "Craft",             year: "F2025", path: "./images/cover/Anatomy.jpg",            mediaType: "image",   link: "https://docs.google.com/document/d/1CdgVwHnZT_aUMaHwX5jimWVnyP8bU4Rk70FCuxBg8_I/preview?tab=t.mtwqcos24jpl", category: "Interactive" },
+  { name: "The Supporter",                   type: "Craft",             year: "F2025", path: "./images/cover/The Supporter.jpg",      mediaType: "image",   link: "https://docs.google.com/document/d/1CdgVwHnZT_aUMaHwX5jimWVnyP8bU4Rk70FCuxBg8_I/preview?tab=t.9t23aaesqd8i", category: "Interactive" },
   { name: "Look, Looking, Be Looked",        type: "Craft",             year: "F2025", path: "./images/cover/DSC02824.jpg",           mediaType: "image",   category: "Interactive" },
 
   { name: "Composing Meteor",                type: "Code",              year: "S2025", path: "./images/cover/Composing Meteor.jpg",   mediaType: "image",   link: "https://editor.p5js.org/jh9571/full/zu4jNnxJZ", category: "Interactive" },

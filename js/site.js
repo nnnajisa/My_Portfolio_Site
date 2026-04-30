@@ -203,6 +203,38 @@ function closeLightbox() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
 /* ═══════════════════════════════════════════
+   AVATAR PARTICLE DOTS — JS-generated, fine & dense
+═══════════════════════════════════════════ */
+(function () {
+  const el = document.querySelector('.avatar-particles');
+  if (!el) return;
+
+  const particles = [];
+  for (let i = 0; i < 200; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const zone  = Math.random();
+    const r = zone < 0.4 ? 45  + Math.random() * 75
+            : zone < 0.75? 120 + Math.random() * 80
+            :               200 + Math.random() * 90;
+    particles.push({
+      x:  Math.round(Math.cos(angle) * r),
+      y:  Math.round(Math.sin(angle) * r),
+      op: (0.25 + Math.random() * 0.65).toFixed(2),
+    });
+  }
+
+  function apply() {
+    const rgb = document.body.classList.contains('light-mode') ? '26,21,14' : '255,255,255';
+    el.style.boxShadow = particles
+      .map(p => `${p.x}px ${p.y}px 0 0 rgba(${rgb},${p.op})`)
+      .join(',');
+  }
+
+  apply();
+  new MutationObserver(apply).observe(document.body, { attributeFilter: ['class'] });
+})();
+
+/* ═══════════════════════════════════════════
    AVATAR → ABOUT PHOTO MORPH
    One element, always visible, just moves.
 ═══════════════════════════════════════════ */
@@ -313,4 +345,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
+
+  new MutationObserver(() => { if (morphReady) update(); })
+    .observe(document.body, { attributeFilter: ['class'] });
 })();

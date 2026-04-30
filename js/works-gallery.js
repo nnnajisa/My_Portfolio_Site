@@ -64,13 +64,13 @@ function render() {
 }
 
 /* ── Build filter chips ── */
-function buildChips(container, vals, setFn) {
-  ['ALL', ...vals].forEach(v => {
+function buildChips(container, allLabel, vals, setFn) {
+  [allLabel, ...vals].forEach(v => {
     const b = document.createElement('button');
-    b.className = 'chip' + (v === 'ALL' ? ' active' : '');
+    b.className = 'chip' + (v === allLabel ? ' active' : '');
     b.textContent = v;
     b.addEventListener('click', () => {
-      setFn(v);
+      setFn(v === allLabel ? 'ALL' : v);
       container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       b.classList.add('active');
       activeIdx = 0;
@@ -79,8 +79,14 @@ function buildChips(container, vals, setFn) {
     container.appendChild(b);
   });
 }
-buildChips(document.getElementById('yearChips'), [...new Set(worksData.map(w => w.year))].sort().reverse(), v => activeYear = v);
-buildChips(document.getElementById('catChips'),  [...new Set(worksData.map(w => w.category))],              v => activeCat  = v);
+const seasonRank = { W: 1, S: 2, F: 3 };
+function semesterVal(s) {
+  return parseInt(s.slice(1)) * 10 + (seasonRank[s[0]] || 0);
+}
+const sortedYears = [...new Set(worksData.map(w => w.year))].sort((a, b) => semesterVal(b) - semesterVal(a));
+
+buildChips(document.getElementById('yearChips'), 'ALL TIME',     sortedYears,                                    v => activeYear = v);
+buildChips(document.getElementById('catChips'),  'ALL CATEGORY', [...new Set(worksData.map(w => w.category))],  v => activeCat  = v);
 
 function filterCards() {
   document.querySelectorAll('.wk-card').forEach(c => {
