@@ -61,8 +61,8 @@ const STRINGS = {
   zh: {
     'nav-home':    '主页',
     'nav-work':    '作品',
-    'nav-about':   '关于',
-    'nav-contact': '联系',
+    'nav-about':   '关于我',
+    'nav-contact': '联系方式',
     'nav-resume':  '简历',
     'home-hi':     "Najisa's Official Site",
     'home-sub':    '数字艺术家 · 媒体与计算设计师',
