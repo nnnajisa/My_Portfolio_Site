@@ -874,11 +874,14 @@ body.light-mode .feye-light { display: block; }
 
   /* ── About ── */
   .s-about { padding: 60px 0 70px; }
-  .about-layout { flex-direction: column; gap: 24px; }
-  .about-left { flex: none; width: 100%; }
-  .about-right { padding-top: 0; }
-  .photo-frame { max-width: 170px; border-width: 14px 14px 48px 14px; }
-  .photo-img { height: 170px; }
+  .about-layout { flex-direction: row; gap: 5vw; align-items: flex-start; }
+  .about-left { flex: 0 0 auto; width: auto; }
+  .about-left .s-title { font-size: 20px; letter-spacing: 7px; margin-bottom: 14px; }
+  .about-right { flex: 1; padding-top: 6px; }
+  .photo-wrap { margin-top: 12px; }
+  .photo-frame { max-width: 130px; border-width: 14px 14px 46px 14px; }
+  .photo-img { height: 125px; }
+  .about-p { font-size: 12px; line-height: 2; letter-spacing: 0.3px; margin-bottom: 18px; }
 
   /* ── Work (selected) ── */
   .s-work { padding: 60px 0 70px; }

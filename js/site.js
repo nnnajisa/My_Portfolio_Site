@@ -263,6 +263,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
   function easeInOut(t)  { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2; }
 
   let aDoc = {}, fDoc = {}, aboutAbsTop = 0, rafId = null, morphReady = false;
+  let fPad = { LR: 20, T: 20, B: 66 };
 
   function recalc() {
     const sy = window.scrollY;
@@ -271,6 +272,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
     aDoc = { top: aR.top + sy, left: aR.left, width: aR.width, height: aR.height };
     fDoc = { top: fR.top + sy, left: fR.left, width: fR.width, height: fR.height };
     aboutAbsTop = about.getBoundingClientRect().top + sy;
+    const cs = getComputedStyle(frame);
+    fPad = {
+      LR: parseFloat(cs.borderLeftWidth)   || 20,
+      T:  parseFloat(cs.borderTopWidth)    || 20,
+      B:  parseFloat(cs.borderBottomWidth) || 66,
+    };
   }
 
   /* Delay until avatar fadeUp animation finishes (~1.5s), then hand off */
@@ -305,9 +312,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbo
     const ep = easeInOut(p);
     const isLt = document.body.classList.contains('light-mode');
 
-    const fPadLR = 20, fPadT = 20, fPadB = 66;
-    const fImgW  = fDoc.width - fPadLR * 2;
-    const fImgH  = 230;
+    const fPadLR = fPad.LR, fPadT = fPad.T, fPadB = fPad.B;
+    const fImgW  = fDoc.width  - fPadLR * 2;
+    const fImgH  = fDoc.height - fPadT - fPadB;
 
     /* Viewport positions — pure math, zero layout reads */
     const aTop = aDoc.top - scrollY, aLeft = aDoc.left;
