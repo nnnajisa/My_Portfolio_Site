@@ -14,9 +14,9 @@ const worksData = [
   { name: "The Supporter",                   type: "Craft",             year: "F2025", path: "./images/cover/The Supporter.jpg",      mediaType: "image",   link: "https://docs.google.com/document/d/1CdgVwHnZT_aUMaHwX5jimWVnyP8bU4Rk70FCuxBg8_I/preview?tab=t.9t23aaesqd8i", category: "Interactive" },
   { name: "Look, Looking, Be Looked",        type: "Craft",             year: "F2025", path: "./images/cover/DSC02824.jpg",           mediaType: "image",   category: "Interactive" },
 
-  { name: "Composing Meteor",                type: "Code",              year: "S2025", path: "./images/cover/Composing Meteor.jpg",   mediaType: "image",   link: "https://editor.p5js.org/jh9571/full/zu4jNnxJZ", category: "Interactive" },
+  { name: "Composing Meteor",                type: "Code",              year: "S2025", path: "./images/cover/Composing Meteor.jpg",   mediaType: "image",   link: "https://wp.nyu.edu/jhimablog/final-project-code-and-documentation/", category: "Interactive" },
   { name: "Swatter Rythm",                   type: "Code",              year: "S2025", path: "./images/cover/Swatter Rythm.jpg",      mediaType: "image",   link: "https://editor.p5js.org/jh9571/full/ykp2SWuaN", category: "Interactive" },
-  { name: "オノマトペメガネ(Otomatopoeia Glasses)", type: "Code",       year: "S2025", path: "./images/cover/Swatter Rythm.jpg",      mediaType: "image",   link: "https://editor.p5js.org/jh9571/full/up8ttm9T9", category: "Interactive" },
+  { name: "オノマトペメガネ(Otomatopoeia Glasses)", type: "Code",       year: "S2025", path: "./images/cover/Swatter Rythm.jpg",      mediaType: "image",   link: "https://wp.nyu.edu/jhimablog/week-2/", category: "Interactive" },
   { name: "My Original Character",           type: "Code",              year: "F2024", path: "./images/cover/Swatter Rythm.jpg",      mediaType: "image",   link: "https://editor.p5js.org/jh9571/full/IMq_2KCD6", category: "Interactive" },
 
   { name: "Suspension",                      type: "Comic",             year: "S2026", path: "./images/cover/Suspension.jpg",         mediaType: "image",   category: "Visual" },

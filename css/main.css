@@ -9,7 +9,7 @@ html { scroll-behavior: smooth; }
 body {
   background: #000;
   color: #fff;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   overflow-x: hidden;
   transition: background-color 0.6s ease, color 0.6s ease;
   cursor: none;
@@ -555,8 +555,8 @@ body.light-mode .reveal { color: transparent; }
 body.light-mode .reveal.in-view { color: rgba(26,21,14,0.9); }
 .s-title.in-view           { color: rgba(255,255,255,0.9); }
 body.light-mode .s-title.in-view { color: rgba(26,21,14,0.9); }
-.about-p.in-view           { color: rgba(255,255,255,0.65); }
-body.light-mode .about-p.in-view { color: rgba(26,21,14,0.65); }
+.about-p.in-view           { color: rgba(255,255,255,0.85); }
+body.light-mode .about-p.in-view { color: rgba(26,21,14,0.85); }
 .s-sub.in-view             { color: rgba(255,255,255,0.35); }
 body.light-mode .s-sub.in-view { color: rgba(26,21,14,0.35); }
 .more-link.in-view         { color: rgba(255,255,255,0.6); }
@@ -632,9 +632,15 @@ body.light-mode .photo-img-light { display: block; }
 
 .about-p {
   font-size: clamp(13px, 1.2vw, 15px); line-height: 2.2;
-  letter-spacing: 0.5px; font-weight: 300;
+  letter-spacing: 0.5px; font-weight: 400;
   margin-bottom: 32px;
 }
+.about-p strong {
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+body.light-mode .about-p strong { color: rgba(26,21,14,1); }
 
 /* ════════════════════════════════════════════
    WORK — SELECTED
