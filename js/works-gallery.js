@@ -160,6 +160,7 @@ window.addEventListener('resize', render);
 
 /* ── Lightbox ── */
 function openLightbox(work) {
+  if (work.openInTab && work.link) { window.open(work.link, '_blank'); return; }
   const lb  = document.getElementById('lightbox');
   const med = document.getElementById('lbMedia');
   if (!lb || !med) return;

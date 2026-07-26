@@ -1,5 +1,9 @@
 /* works-data.js — all works content */
 const worksData = [
+  { name: "Care Compass NYC",               type: "Code",              year: "S2026", path: "LHhdciTFOK8",                             mediaType: "youtube", category: "Interactive" },
+  { name: "Foggy Bathroom",                 type: "Code",              year: "S2026", path: "82zQFE496aM",                             mediaType: "youtube", category: "Interactive" },
+  { name: "Typer",                          type: "Code",              year: "S2026", path: "./images/cover/Typer.jpg",                mediaType: "image",   category: "Interactive", link: "https://app.notion.com/p/3d-in-the-Browser-Week-6-349795b3a32a80a48405f399839504a8?source=copy_link", github: "https://github.com/nnnajisa/Unexpected-Interaction", openInTab: true },
+
   { name: "The Day Befor I Got My Glasses",  type: "Animation",         year: "F2025", path: "WTY52gRr9ak",                          mediaType: "youtube", category: "Motion" },
   { name: "The Night of Seimei",             type: "Animation",         year: "F2025", path: "DWZ1bKpK_ME",                          mediaType: "youtube", category: "Motion" },
   { name: "文化と動物・未論じなりのの狐の祭市(Cultures and Animals-Supernatural Tale: The Wolf Grandma)", type: "Video Art/Language", year: "S2025", path: "wCDq7xn3IKs", mediaType: "youtube", category: "Motion" },

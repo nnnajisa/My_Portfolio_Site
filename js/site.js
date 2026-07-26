@@ -150,9 +150,22 @@ document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 /* ═══════════════════════════════════════════
    SELECTED WORKS GRID
 ═══════════════════════════════════════════ */
+const SELECTED_WORKS = [
+  "Love Visualization",
+  "Care Compass NYC",
+  "Composing Meteor",
+  "Foggy Bathroom",
+  "The Night of Seimei",
+  "Wake Up!",
+  "The Day Befor I Got My Glasses",
+];
+
 const selGrid = document.getElementById('selGrid');
 if (selGrid && typeof worksData !== 'undefined') {
-  worksData.slice(0, 4).forEach(work => {
+  worksData
+    .filter(w => SELECTED_WORKS.includes(w.name))
+    .sort((a, b) => SELECTED_WORKS.indexOf(a.name) - SELECTED_WORKS.indexOf(b.name))
+    .forEach(work => {
     const card = document.createElement('div');
     card.className = 'sel-card';
 
@@ -179,6 +192,7 @@ if (selGrid && typeof worksData !== 'undefined') {
    LIGHTBOX
 ═══════════════════════════════════════════ */
 function openLightbox(work) {
+  if (work.openInTab && work.link) { window.open(work.link, '_blank'); return; }
   const lb  = document.getElementById('lightbox');
   const med = document.getElementById('lbMedia');
   if (!lb || !med) return;
