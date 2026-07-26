@@ -158,6 +158,7 @@ const SELECTED_WORKS = [
   "The Night of Seimei",
   "Wake Up!",
   "The Day Befor I Got My Glasses",
+  "Locked Out",
 ];
 
 const selGrid = document.getElementById('selGrid');
