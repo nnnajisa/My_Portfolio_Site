@@ -6,7 +6,7 @@ const worksData = [
 
   { name: "The Day Befor I Got My Glasses",  type: "Animation",         year: "F2025", path: "WTY52gRr9ak",                          mediaType: "youtube", category: "Motion" },
   { name: "The Night of Seimei",             type: "Animation",         year: "F2025", path: "DWZ1bKpK_ME",                          mediaType: "youtube", category: "Motion" },
-  { name: "文化と動物・未論じなりのの狐の祭市(Cultures and Animals-Supernatural Tale: The Wolf Grandma)", type: "Video Art/Language", year: "S2025", path: "wCDq7xn3IKs", mediaType: "youtube", category: "Motion" },
+  { name: "文化と動物〜怪談〜オオカミの祖母(Cultures and Animals-Supernatural Tale: The Wolf Grandma)", type: "Video Art/Language", year: "S2025", path: "wCDq7xn3IKs", mediaType: "youtube", category: "Motion" },
   { name: "陰獣(Beast in the Shadows)",      type: "Video Art/Language",year: "F2025", path: "oyctaDFgQIk",                          mediaType: "youtube", category: "Motion" },
   { name: "Surveillance",                    type: "Video Art/Animation",year:"W2025", path: "yRcjdy4TrCc",                          mediaType: "youtube", category: "Motion" },
   { name: "Weathegg",                        type: "Animation",         year: "S2024", path: "MlDc1TzClHk",                          mediaType: "youtube", category: "Motion" },
